@@ -18,6 +18,6 @@ void _evtx_alloc_fail(size_t size);
 
 int two_bytes_to_int(const char *bytes);
 int four_bytes_to_int(const char *bytes);
-long eight_byes_to_long(const char *bytes);
+long eight_bytes_to_long(const char *bytes);
 
 #endif //_UTIL_H

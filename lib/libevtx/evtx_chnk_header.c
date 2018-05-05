@@ -37,10 +37,10 @@ evtx_chnk_header_t *evtx_chnk_header_init(const char *bytes) {
 
     CALLOC(ret, 1, sizeof(evtx_chnk_header_t), return NULL);
 
-    ret->first_event_record_num = eight_byes_to_long(bytes + 0x08);
-    ret->last_event_record_num = eight_byes_to_long(bytes + 0x10);
-    ret->first_event_record_id = eight_byes_to_long(bytes + 0x18);
-    ret->last_event_record_id = eight_byes_to_long(bytes + 0x20);
+    ret->first_event_record_num = eight_bytes_to_long(bytes + 0x08);
+    ret->last_event_record_num = eight_bytes_to_long(bytes + 0x10);
+    ret->first_event_record_id = eight_bytes_to_long(bytes + 0x18);
+    ret->last_event_record_id = eight_bytes_to_long(bytes + 0x20);
 
     if (four_bytes_to_int(bytes + 0x28) != 0x80) {
         /* TODO: Display warning */

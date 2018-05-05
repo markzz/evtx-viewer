@@ -44,9 +44,9 @@ evtx_header_t *evtx_header_init(char *bytes) {
         return NULL;
     }
 
-    ret->first_chunk = eight_byes_to_long(bytes + 0x08);
-    ret->last_chunk = eight_byes_to_long(bytes + 0x10);
-    ret->next_rec_id = eight_byes_to_long(bytes + 0x18);
+    ret->first_chunk = eight_bytes_to_long(bytes + 0x08);
+    ret->last_chunk = eight_bytes_to_long(bytes + 0x10);
+    ret->next_rec_id = eight_bytes_to_long(bytes + 0x18);
 
     if (four_bytes_to_int(bytes + 0x20) != 0x80) {
         /* TODO: Display warning */
