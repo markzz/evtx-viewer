@@ -1,5 +1,5 @@
 /*
- * evtx.c
+ * evtx_record.h
  *
  * Copyright (c) 2018, Mark Weiman <mark.weiman@markzz.com>
  *
@@ -16,4 +16,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#include "evtx.h"
+#ifndef _EVTX_RECORD_H
+#define _EVTX_RECORD_H
+
+
+
+#endif //_EVTX_RECORD_H
