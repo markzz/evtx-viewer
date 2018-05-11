@@ -17,6 +17,7 @@
  */
 
 #include "evtx_chnk_header.h"
+#include "evtx_record.h"
 #include "util.h"
 
 struct _evtx_chnk_header_t {
@@ -29,6 +30,9 @@ struct _evtx_chnk_header_t {
     int event_record_data_crc32;
     int flags;
     int header_crc32;
+
+    int num_records;
+    evtx_record_t **records;
 };
 
 static int _check_first_eight(const char *bytes) {

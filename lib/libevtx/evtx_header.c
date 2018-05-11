@@ -19,6 +19,7 @@
 #include <stdlib.h>
 
 #include "evtx_header.h"
+#include "evtx_chnk_header.h"
 #include "util.h"
 
 struct _evtx_header_t {
@@ -30,6 +31,8 @@ struct _evtx_header_t {
     int num_chunks;
     int flags;
     unsigned int checksum;
+
+    evtx_chnk_header_t **chunks;
 };
 
 static int _check_first_eight(const char *bytes) {

@@ -16,6 +16,38 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <time.h>
+
 #include "evtx_record.h"
+#include "xml_obj.h"
+#include "util.h"
+
+struct _evtx_record_t {
+    long event_record_id;
+    struct tm datetime;
+
+    evtx_xml_obj_t xml_obj;
+};
+
+static int _check_magic(const char *bytes) {
+    char expected[] = {0x2A, 0x2A, 0x00, 0x00};
+    for (int i = 0; i < 4; i++) {
+        if (bytes[i] != expected[i]) {
+            return -1;
+        }
+    }
+    return 0;
+}
+
+evtx_record_t *evtx_record_init(const char *bytes) {
+    evtx_record_t *ret;
+
+    if (_check_magic(bytes) != 0) {
+        /* TODO: Log failure */
+        return NULL;
+    }
+
+    CALLOC(ret, 1, sizeof(evtx_record_t), return NULL);
 
 
+}

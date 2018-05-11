@@ -19,6 +19,6 @@
 #ifndef _EVTX_RECORD_H
 #define _EVTX_RECORD_H
 
-
+typedef struct _evtx_record_t evtx_record_t;
 
 #endif //_EVTX_RECORD_H
