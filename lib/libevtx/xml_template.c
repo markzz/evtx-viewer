@@ -21,7 +21,7 @@
 #include "evtx_xml.h"
 #include "util.h"
 
-int _parse_template(evtx_xml_obj_t *obj, const char *bytes) {
+int _parse_template(evtx_xml_obj_t **obj, const char *bytes) {
     int pos = 1;
     int size = 0;
     int data_size = 0;
@@ -41,8 +41,7 @@ int _parse_template(evtx_xml_obj_t *obj, const char *bytes) {
 
     data_size = four_bytes_to_int(bytes + 0x1E);
 
-    parse_fragment(bytes + 0x22);
+    pos += parse_fragment(&obj, bytes + 0x22);
 
-
-    return 0;
+    return data_size;
 }

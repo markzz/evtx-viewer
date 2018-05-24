@@ -23,9 +23,9 @@ typedef struct _evtx_xml_attr_t evtx_xml_attr_t;
 typedef struct _evtx_xml_obj_t evtx_xml_obj_t;
 typedef struct _evtx_xml_template_t evtx_xml_template_t;
 
-evtx_xml_obj_t *parse_fragment(const char *bytes);
+int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes);
 
-int _parse_template(evtx_xml_obj_t *obj, const char *bytes);
+int _parse_template(evtx_xml_obj_t **obj, const char *bytes);
 
 
 #endif //EVTX_VIEWER_XML_OBJ_H

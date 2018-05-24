@@ -32,24 +32,24 @@ static int _check_magic(const char *bytes) {
     return 0;
 }
 
-evtx_xml_obj_t *parse_fragment(const char *bytes) {
+int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes) {
     evtx_xml_obj_t *ret = NULL;
     int pos = 4;
 
     if (_check_magic(bytes) != 0) {
         /* TODO: Log failure */
-        return NULL;
+        return 0;
     }
 
-    CALLOC(ret, 1, sizeof(evtx_xml_obj_t), return NULL);
+    CALLOC(ret, 1, sizeof(evtx_xml_obj_t), return 0);
 
     if (bytes[pos] == 0x0C) {
-        pos += _parse_template(ret, bytes + pos);
+        pos += _parse_template(&ret, bytes + pos);
     } else if (bytes[pos] == 0x01 || bytes[pos] == 0x41) {
         /* PARSE XML OBJ */
     } else {
         /* TODO: log error */
-        return NULL;
+        return 0;
     }
 
 }
