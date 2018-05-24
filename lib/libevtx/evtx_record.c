@@ -19,12 +19,12 @@
 #include <time.h>
 
 #include "evtx_record.h"
-#include "xml_obj.h"
+#include "evtx_xml.h"
 #include "util.h"
 
 struct _evtx_record_t {
     long event_record_id;
-    struct tm datetime;
+    time_t record_time;
 
     evtx_xml_obj_t xml_obj;
 };
@@ -41,6 +41,8 @@ static int _check_magic(const char *bytes) {
 
 evtx_record_t *evtx_record_init(const char *bytes) {
     evtx_record_t *ret;
+    int size = 0;
+    long long tmp_ft;
 
     if (_check_magic(bytes) != 0) {
         /* TODO: Log failure */
@@ -48,6 +50,14 @@ evtx_record_t *evtx_record_init(const char *bytes) {
     }
 
     CALLOC(ret, 1, sizeof(evtx_record_t), return NULL);
+
+    /* TODO: Log size (debugging output) */
+    size = four_bytes_to_int(bytes + 0x04);
+
+    ret->event_record_id = eight_bytes_to_long(bytes + 0x08);
+
+    tmp_ft = eight_bytes_to_long(bytes + 0x10);
+    ret->record_time = _filetime_to_unix_time(tmp_ft);
 
 
 }

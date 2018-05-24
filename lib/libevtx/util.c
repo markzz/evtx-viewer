@@ -18,6 +18,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include "util.h"
 
@@ -36,4 +37,22 @@ int four_bytes_to_int(const char *bytes) {
 long eight_bytes_to_long(const char *bytes) {
     return (long)four_bytes_to_int(bytes) | bytes[4] << 32 | bytes[5] << 40 |
            bytes[6] << 48 | bytes[7] << 56;
+}
+
+uint16_t _evtx_ms_str_hash(const char *utf16_str, int len) {
+    int val = 0;
+
+    for (int i = 0; i < len; i++) {
+        val = val * val * 65599 + (utf16_str[i*2] | utf16_str[i*2+1] << 8);
+    }
+
+    return (uint16_t)(val & 0xff);
+}
+
+unsigned long _filetime_to_unix_time(long long filetime) {
+    return (unsigned long)(filetime / 10000000 - 11644473600);
+}
+
+int _hash_match(uint16_t hash, const char *utf16_str, int len) {
+    return hash == _evtx_ms_str_hash(utf16_str, len);
 }

@@ -1,5 +1,5 @@
 /*
- * util.h
+ * evtx_xml.c
  *
  * Copyright (c) 2018, Mark Weiman <mark.weiman@markzz.com>
  *
@@ -16,25 +16,40 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _UTIL_H
-#define _UTIL_H
-
 #include <stdlib.h>
 
-void _evtx_alloc_fail(size_t size);
+#include "evtx_record.h"
+#include "evtx_xml.h"
+#include "util.h"
 
-#define MALLOC(p, s, action) do { p = malloc(s); if (p == NULL) { _evtx_alloc_fail(s); action; } } while(0)
-#define CALLOC(p, l, s, action) do { p = calloc(l, s); if(p == NULL) { _evtx_alloc_fail(l * s); action; } } while(0)
+static int _check_magic(const char *bytes) {
+    char expected[] = {0x0F, 0x01, 0x01, 0x00};
+    for (int i = 0; i < 4; i++) {
+        if (bytes[i] != expected[i]) {
+            return -1;
+        }
+    }
+    return 0;
+}
 
-#define FREE(p) do { free(p); p = NULL; } while(0)
+evtx_xml_obj_t *parse_fragment(const char *bytes) {
+    evtx_xml_obj_t *ret = NULL;
+    int pos = 4;
 
-#define ASSERT(cond, action) do { if(!(cond)) { action; } } while(0)
+    if (_check_magic(bytes) != 0) {
+        /* TODO: Log failure */
+        return NULL;
+    }
 
-int two_bytes_to_int(const char *bytes);
-int four_bytes_to_int(const char *bytes);
-long eight_bytes_to_long(const char *bytes);
+    CALLOC(ret, 1, sizeof(evtx_xml_obj_t), return NULL);
 
-unsigned long _filetime_to_unix_time(long long filetime);
-int _hash_match(uint16_t hash, const char *utf16_str, int len);
+    if (bytes[pos] == 0x0C) {
+        pos += _parse_template(ret, bytes + pos);
+    } else if (bytes[pos] == 0x01 || bytes[pos] == 0x41) {
+        /* PARSE XML OBJ */
+    } else {
+        /* TODO: log error */
+        return NULL;
+    }
 
-#endif //_UTIL_H
+}

@@ -1,5 +1,5 @@
 /*
- * util.h
+ * xml_template.c
  *
  * Copyright (c) 2018, Mark Weiman <mark.weiman@markzz.com>
  *
@@ -16,25 +16,33 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _UTIL_H
-#define _UTIL_H
-
 #include <stdlib.h>
 
-void _evtx_alloc_fail(size_t size);
+#include "evtx_xml.h"
+#include "util.h"
 
-#define MALLOC(p, s, action) do { p = malloc(s); if (p == NULL) { _evtx_alloc_fail(s); action; } } while(0)
-#define CALLOC(p, l, s, action) do { p = calloc(l, s); if(p == NULL) { _evtx_alloc_fail(l * s); action; } } while(0)
+int _parse_template(evtx_xml_obj_t *obj, const char *bytes) {
+    int pos = 1;
+    int size = 0;
+    int data_size = 0;
 
-#define FREE(p) do { free(p); p = NULL; } while(0)
+    if (bytes[0] != 0x0C) {
+        /* TODO: Log error */
+        return 0;
+    }
 
-#define ASSERT(cond, action) do { if(!(cond)) { action; } } while(0)
+    /* TODO: debug log next irrelevant byte (should be 0x01) */
+    /* TODO: debug log template id */
 
-int two_bytes_to_int(const char *bytes);
-int four_bytes_to_int(const char *bytes);
-long eight_bytes_to_long(const char *bytes);
+    size = four_bytes_to_int(bytes + 0x06);
 
-unsigned long _filetime_to_unix_time(long long filetime);
-int _hash_match(uint16_t hash, const char *utf16_str, int len);
+    /* TODO: debug log next four bytes (next template def offset) */
+    /* TODO: debug log template GUID */
 
-#endif //_UTIL_H
+    data_size = four_bytes_to_int(bytes + 0x1E);
+
+    parse_fragment(bytes + 0x22);
+
+
+    return 0;
+}

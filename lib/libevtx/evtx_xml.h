@@ -1,5 +1,5 @@
 /*
- * util.h
+ * evtx_xml.h
  *
  * Copyright (c) 2018, Mark Weiman <mark.weiman@markzz.com>
  *
@@ -16,25 +16,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-#ifndef _UTIL_H
-#define _UTIL_H
+#ifndef EVTX_VIEWER_XML_OBJ_H
+#define EVTX_VIEWER_XML_OBJ_H
 
-#include <stdlib.h>
+typedef struct _evtx_xml_attr_t evtx_xml_attr_t;
+typedef struct _evtx_xml_obj_t evtx_xml_obj_t;
+typedef struct _evtx_xml_template_t evtx_xml_template_t;
 
-void _evtx_alloc_fail(size_t size);
+evtx_xml_obj_t *parse_fragment(const char *bytes);
 
-#define MALLOC(p, s, action) do { p = malloc(s); if (p == NULL) { _evtx_alloc_fail(s); action; } } while(0)
-#define CALLOC(p, l, s, action) do { p = calloc(l, s); if(p == NULL) { _evtx_alloc_fail(l * s); action; } } while(0)
+int _parse_template(evtx_xml_obj_t *obj, const char *bytes);
 
-#define FREE(p) do { free(p); p = NULL; } while(0)
 
-#define ASSERT(cond, action) do { if(!(cond)) { action; } } while(0)
-
-int two_bytes_to_int(const char *bytes);
-int four_bytes_to_int(const char *bytes);
-long eight_bytes_to_long(const char *bytes);
-
-unsigned long _filetime_to_unix_time(long long filetime);
-int _hash_match(uint16_t hash, const char *utf16_str, int len);
-
-#endif //_UTIL_H
+#endif //EVTX_VIEWER_XML_OBJ_H
