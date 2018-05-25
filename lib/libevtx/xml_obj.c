@@ -33,3 +33,4 @@ struct _evtx_xml_obj_t {
     struct _evtx_xml_obj_t **children;
 };
 
+int

@@ -17,12 +17,13 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "evtx_header.h"
 #include "evtx_chnk_header.h"
 #include "util.h"
 
-struct _evtx_header_t {
+struct _evtx_t {
     long first_chunk;
     long last_chunk;
     long next_rec_id;
@@ -45,15 +46,16 @@ static int _check_first_eight(const char *bytes) {
     return 0;
 }
 
-void evtx_header_free(evtx_header_t *h) {
+void evtx_header_free(evtx_t *h) {
     /* there's nothing really complicated with this struct */
     FREE(h);
 }
 
-evtx_header_t *evtx_header_init(char *bytes) {
-    evtx_header_t *ret = NULL;
+evtx_t *evtx_header_init(char *bytes) {
+    evtx_t *ret = NULL;
+    int pos = 4096;
 
-    CALLOC(ret, 1, sizeof(evtx_header_t), return NULL);
+    CALLOC(ret, 1, sizeof(evtx_t), return NULL);
 
     if (_check_first_eight(bytes) != 0) {
         /* TODO: Log failure */
@@ -80,6 +82,17 @@ evtx_header_t *evtx_header_init(char *bytes) {
     ret->num_chunks = two_bytes_to_int(bytes + 0x2A);
     ret->flags = four_bytes_to_int(bytes + 0x78);
     ret->checksum = (unsigned int)four_bytes_to_int(bytes + 0x7C);
+
+    CALLOC(ret->chunks, (size_t)ret->num_chunks, sizeof(evtx_chnk_header_t*), return NULL);
+
+
+    for (int i = 0; i < ret->num_chunks; i++) {
+        pos += evtx_chnk_header_init(ret->chunks + i, bytes + pos);
+
+        while (strcmp(bytes + pos, "ElfChnk") != 0) {
+            pos++;
+        }
+    }
 
     /* TODO: Check crc32 value */
     return ret;

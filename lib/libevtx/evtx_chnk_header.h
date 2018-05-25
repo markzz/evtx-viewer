@@ -21,6 +21,6 @@
 
 typedef struct _evtx_chnk_header_t evtx_chnk_header_t;
 
-
+int evtx_chnk_header_init(evtx_chnk_header_t **chk_header, const char *bytes);
 
 #endif //_EVTX_CHNK_HEADER_H

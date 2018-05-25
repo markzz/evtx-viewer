@@ -45,10 +45,22 @@ static int _check_first_eight(const char *bytes) {
     return 0;
 }
 
-evtx_chnk_header_t *evtx_chnk_header_init(const char *bytes) {
-    evtx_chnk_header_t *ret;
+static int _check_next(const char *bytes) {
+    char expected[] = {0x0F, 0x01, 0x01, 0x00};
+    for (int i = 0; i < 4; i++) {
+        if (bytes[i] != expected[i]) {
+            return -1;
+        }
+    }
+    return 0;
+}
 
-    if (_check_first_eight(bytes) != 0) {
+int evtx_chnk_header_init(evtx_chnk_header_t **chk_header, const char *bytes) {
+    evtx_chnk_header_t *ret;
+    int pos = 0x0200;
+    int i = 0;
+
+    if (_check_first_eight(bytes) == 0) {
         /* TODO: Log failure */
         return NULL;
     }
@@ -69,6 +81,13 @@ evtx_chnk_header_t *evtx_chnk_header_init(const char *bytes) {
     ret->event_record_data_crc32 = four_bytes_to_int(bytes + 0x34);
     ret->flags = four_bytes_to_int(bytes + 0x78);
     ret->header_crc32 = four_bytes_to_int(bytes + 0x7C);
+
+    while (_check_next(bytes + pos) == 0) {
+        pos += evtx_record_init(ret->records + i, bytes + pos);
+    }
+
+    *chk_header = ret;
+    return pos;
 
     /* TODO: Check crc32 values */
     /* TODO: COMMON STRING OFFSET ARRAY */

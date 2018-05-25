@@ -19,7 +19,7 @@
 #ifndef _EVTX_HEADER_H
 #define _EVTX_HEADER_H
 
-typedef struct _evtx_header_t evtx_header_t;
+typedef struct _evtx_t evtx_t;
 
 
 

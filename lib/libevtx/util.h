@@ -21,6 +21,8 @@
 
 #include <stdlib.h>
 
+#include "evtx.h"
+
 void _evtx_alloc_fail(size_t size);
 
 #define MALLOC(p, s, action) do { p = malloc(s); if (p == NULL) { _evtx_alloc_fail(s); action; } } while(0)
@@ -29,6 +31,8 @@ void _evtx_alloc_fail(size_t size);
 #define FREE(p) do { free(p); p = NULL; } while(0)
 
 #define ASSERT(cond, action) do { if(!(cond)) { action; } } while(0)
+
+int _evtx_log(evtx_log_level_t level, const char *format, ...);
 
 int two_bytes_to_int(const char *bytes);
 int four_bytes_to_int(const char *bytes);

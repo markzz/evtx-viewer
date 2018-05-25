@@ -19,6 +19,12 @@
 #ifndef _EVTX_H
 #define _EVTX_H
 
-
+typedef enum _evtx_log_level_t {
+    EVTX_LOG_LEVEL_DEBUG,
+    EVTX_LOG_LEVEL_NOTICE,
+    EVTX_LOG_LEVEL_WARN,
+    EVTX_LOG_LEVEL_ERROR,
+    EVTX_LOG_LEVEL_CRITICAL,
+} evtx_log_level_t;
 
 #endif _EVTX_H

@@ -26,7 +26,7 @@ struct _evtx_record_t {
     long event_record_id;
     time_t record_time;
 
-    evtx_xml_obj_t xml_obj;
+    evtx_xml_obj_t *xml_obj;
 };
 
 static int _check_magic(const char *bytes) {
@@ -39,7 +39,7 @@ static int _check_magic(const char *bytes) {
     return 0;
 }
 
-evtx_record_t *evtx_record_init(const char *bytes) {
+int evtx_record_init(evtx_record_t **record, const char *bytes) {
     evtx_record_t *ret;
     int size = 0;
     long long tmp_ft;
@@ -59,5 +59,8 @@ evtx_record_t *evtx_record_init(const char *bytes) {
     tmp_ft = eight_bytes_to_long(bytes + 0x10);
     ret->record_time = _filetime_to_unix_time(tmp_ft);
 
+    size = 0x18 + parse_fragment(&ret->xml_obj, bytes + 0x18);
 
+    *record = ret;
+    return size;
 }

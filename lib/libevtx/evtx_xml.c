@@ -52,4 +52,6 @@ int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes) {
         return 0;
     }
 
+    *obj_p = ret;
+    return pos;
 }

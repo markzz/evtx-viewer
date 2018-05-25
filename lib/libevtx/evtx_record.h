@@ -21,4 +21,6 @@
 
 typedef struct _evtx_record_t evtx_record_t;
 
+int evtx_record_init(evtx_record_t **record, const char *bytes);
+
 #endif //_EVTX_RECORD_H
