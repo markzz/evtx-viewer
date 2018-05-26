@@ -27,4 +27,8 @@ typedef enum _evtx_log_level_t {
     EVTX_LOG_LEVEL_CRITICAL,
 } evtx_log_level_t;
 
-#endif _EVTX_H
+typedef struct _evtx_t evtx_t;
+
+evtx_t *evtx_header_init(char *bytes);
+
+#endif

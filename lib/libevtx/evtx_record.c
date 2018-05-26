@@ -17,6 +17,7 @@
  */
 
 #include <time.h>
+#include <stdio.h>
 
 #include "evtx_record.h"
 #include "evtx_xml.h"
@@ -42,21 +43,21 @@ static int _check_magic(const char *bytes) {
 int evtx_record_init(evtx_record_t **record, const char *bytes) {
     evtx_record_t *ret;
     int size = 0;
-    long long tmp_ft;
+    uint64_t tmp_ft;
 
     if (_check_magic(bytes) != 0) {
         /* TODO: Log failure */
-        return NULL;
+        return 0;
     }
 
     CALLOC(ret, 1, sizeof(evtx_record_t), return NULL);
 
     /* TODO: Log size (debugging output) */
-    size = four_bytes_to_int(bytes + 0x04);
+    size = four_bytes_to_int32(bytes + 0x04);
 
-    ret->event_record_id = eight_bytes_to_long(bytes + 0x08);
+    ret->event_record_id = eight_bytes_to_int64(bytes + 0x08);
 
-    tmp_ft = eight_bytes_to_long(bytes + 0x10);
+    tmp_ft = eight_bytes_to_int64(bytes + 0x10);
     ret->record_time = _filetime_to_unix_time(tmp_ft);
 
     size = 0x18 + parse_fragment(&ret->xml_obj, bytes + 0x18);

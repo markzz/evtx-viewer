@@ -60,29 +60,29 @@ int evtx_chnk_header_init(evtx_chnk_header_t **chk_header, const char *bytes) {
     int pos = 0x0200;
     int i = 0;
 
-    if (_check_first_eight(bytes) == 0) {
+    if (_check_first_eight(bytes) != 0) {
         /* TODO: Log failure */
         return NULL;
     }
 
     CALLOC(ret, 1, sizeof(evtx_chnk_header_t), return NULL);
 
-    ret->first_event_record_num = eight_bytes_to_long(bytes + 0x08);
-    ret->last_event_record_num = eight_bytes_to_long(bytes + 0x10);
-    ret->first_event_record_id = eight_bytes_to_long(bytes + 0x18);
-    ret->last_event_record_id = eight_bytes_to_long(bytes + 0x20);
+    ret->first_event_record_num = eight_bytes_to_int64(bytes + 0x08);
+    ret->last_event_record_num = eight_bytes_to_int64(bytes + 0x10);
+    ret->first_event_record_id = eight_bytes_to_int64(bytes + 0x18);
+    ret->last_event_record_id = eight_bytes_to_int64(bytes + 0x20);
 
-    if (four_bytes_to_int(bytes + 0x28) != 0x80) {
+    if (four_bytes_to_int32(bytes + 0x28) != 0x80) {
         /* TODO: Display warning */
     }
 
-    ret->last_event_record_offset = four_bytes_to_int(bytes + 0x2C);
-    ret->free_space_offset = four_bytes_to_int(bytes + 0x30);
-    ret->event_record_data_crc32 = four_bytes_to_int(bytes + 0x34);
-    ret->flags = four_bytes_to_int(bytes + 0x78);
-    ret->header_crc32 = four_bytes_to_int(bytes + 0x7C);
+    ret->last_event_record_offset = four_bytes_to_int32(bytes + 0x2C);
+    ret->free_space_offset = four_bytes_to_int32(bytes + 0x30);
+    ret->event_record_data_crc32 = four_bytes_to_int32(bytes + 0x34);
+    ret->flags = four_bytes_to_int32(bytes + 0x78);
+    ret->header_crc32 = four_bytes_to_int32(bytes + 0x7C);
 
-    while (_check_next(bytes + pos) == 0) {
+    while (_check_next(bytes + pos) != 0) {
         pos += evtx_record_init(ret->records + i, bytes + pos);
     }
 

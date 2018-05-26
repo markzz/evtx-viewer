@@ -29,7 +29,7 @@ struct _evtx_t {
     long next_rec_id;
     int size;
     int blk_size;
-    int num_chunks;
+    unsigned int num_chunks;
     int flags;
     unsigned int checksum;
 
@@ -63,25 +63,25 @@ evtx_t *evtx_header_init(char *bytes) {
         return NULL;
     }
 
-    ret->first_chunk = eight_bytes_to_long(bytes + 0x08);
-    ret->last_chunk = eight_bytes_to_long(bytes + 0x10);
-    ret->next_rec_id = eight_bytes_to_long(bytes + 0x18);
+    ret->first_chunk = eight_bytes_to_int64(bytes + 0x08);
+    ret->last_chunk = eight_bytes_to_int64(bytes + 0x10);
+    ret->next_rec_id = eight_bytes_to_int64(bytes + 0x18);
 
-    if (four_bytes_to_int(bytes + 0x20) != 0x80) {
+    if (four_bytes_to_int32(bytes + 0x20) != 0x80) {
         /* TODO: Display warning */
     }
 
-    if (two_bytes_to_int(bytes + 0x24) != 3) {
+    if (two_bytes_to_int16(bytes + 0x24) != 3) {
         /* TODO: Display warning */
     }
 
-    if (two_bytes_to_int(bytes + 0x28) != 1) {
+    if (two_bytes_to_int16(bytes + 0x28) != 1) {
         /* TODO: Display warning */
     }
 
-    ret->num_chunks = two_bytes_to_int(bytes + 0x2A);
-    ret->flags = four_bytes_to_int(bytes + 0x78);
-    ret->checksum = (unsigned int)four_bytes_to_int(bytes + 0x7C);
+    ret->num_chunks = two_bytes_to_int16(bytes + 0x2A);
+    ret->flags = four_bytes_to_int32(bytes + 0x78);
+    ret->checksum = (unsigned int) four_bytes_to_int32(bytes + 0x7C);
 
     CALLOC(ret->chunks, (size_t)ret->num_chunks, sizeof(evtx_chnk_header_t*), return NULL);
 

@@ -23,6 +23,16 @@ typedef struct _evtx_xml_attr_t evtx_xml_attr_t;
 typedef struct _evtx_xml_obj_t evtx_xml_obj_t;
 typedef struct _evtx_xml_template_t evtx_xml_template_t;
 
+struct _evtx_xml_obj_t {
+    char *name;
+
+    int num_attrs;
+    evtx_xml_attr_t **attrs;
+
+    int num_children;
+    struct _evtx_xml_obj_t **children;
+};
+
 int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes);
 
 int _parse_template(evtx_xml_obj_t **obj, const char *bytes);
