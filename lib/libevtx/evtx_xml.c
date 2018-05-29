@@ -32,7 +32,7 @@ static int _check_magic(const char *bytes) {
     return 0;
 }
 
-int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes) {
+int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes, int in_template) {
     evtx_xml_obj_t *ret = NULL;
     int pos = 4;
 

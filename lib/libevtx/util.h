@@ -94,4 +94,6 @@ uint64_t eight_bytes_to_int64(const char *bytes);
 time_t _filetime_to_unix_time(uint64_t filetime);
 int _hash_match(uint16_t hash, const char *utf16_str, int len);
 
+char *_get_string_from_offset(const char *search, int offset);
+
 #endif //_UTIL_H

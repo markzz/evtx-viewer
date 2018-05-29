@@ -46,7 +46,7 @@ int _parse_template(evtx_xml_obj_t **obj, const char *bytes) {
 
     data_size = four_bytes_to_int32(bytes + 0x1E);
 
-    pos += parse_fragment(obj, bytes + 0x22);
+    pos += parse_fragment(obj, bytes + 0x22, 1);
 
     vspec_num_items = four_bytes_to_int32(bytes + pos);
     pos += 4;

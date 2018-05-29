@@ -60,7 +60,7 @@ int evtx_record_init(evtx_record_t **record, const char *bytes) {
     tmp_ft = eight_bytes_to_int64(bytes + 0x10);
     ret->record_time = _filetime_to_unix_time(tmp_ft);
 
-    size = 0x18 + parse_fragment(&ret->xml_obj, bytes + 0x18);
+    size = 0x18 + parse_fragment(&ret->xml_obj, bytes + 0x18, 0);
 
     *record = ret;
     return size;

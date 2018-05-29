@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "util.h"
 
@@ -27,8 +28,7 @@ void _evtx_alloc_fail(size_t size) {
 }
 
 uint16_t two_bytes_to_int16(const char *bytes) {
-    printf("%u\n", (uint16_t)bytes[0] & 0xFF);
-    return (uint16_t)bytes[0] & 0xFF | (uint16_t)bytes[1] << 8;
+    return (uint16_t)bytes[0] | (uint16_t)bytes[1] << 8;
 }
 
 uint32_t four_bytes_to_int32(const char *bytes) {
@@ -51,10 +51,31 @@ uint16_t _evtx_ms_str_hash(const char *utf16_str, int len) {
 }
 
 time_t _filetime_to_unix_time(uint64_t filetime) {
-    long long test = filetime / 10000000;
     return (unsigned long)((filetime / 10000000) - 11644473600);
 }
 
 int _hash_match(uint16_t hash, const char *utf16_str, int len) {
     return hash == _evtx_ms_str_hash(utf16_str, len);
+}
+
+/* this is me being lazy, this should probably be changed... */
+char *_get_string_from_offset(const char *bytes, int offset) {
+    char *b = (char*)bytes;
+    size_t s;
+    uint16_t hash;
+    char *ret = NULL;
+
+    while (strcmp(b, "ElfChnk") != 0) {
+        b -= 1;
+    }
+
+    b += offset + 4;
+    hash = two_bytes_to_int16(b); /* TODO: Check hash */
+    b += 2;
+    s = two_bytes_to_int16(b);
+    b += 2;
+
+    CALLOC(ret, s * 2 + 2, sizeof(char), return NULL);
+    memcpy(ret, b, s * 2);
+    return ret;
 }

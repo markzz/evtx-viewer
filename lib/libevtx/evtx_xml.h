@@ -25,6 +25,7 @@ typedef struct _evtx_xml_template_t evtx_xml_template_t;
 
 struct _evtx_xml_obj_t {
     char *name;
+    int16_t dep;
 
     int num_attrs;
     evtx_xml_attr_t **attrs;
@@ -33,7 +34,7 @@ struct _evtx_xml_obj_t {
     struct _evtx_xml_obj_t **children;
 };
 
-int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes);
+int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes, int in_template);
 
 int _parse_template(evtx_xml_obj_t **obj, const char *bytes);
 

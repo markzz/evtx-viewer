@@ -16,11 +16,36 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
+#include <inttypes.h>
+
 #include "evtx_xml.h"
+#include "util.h"
 
 struct _evtx_xml_attr_t {
     char *name;
     char *value;
 };
 
+int _parse_xml_obj(evtx_xml_obj_t **obj, const char *bytes, int in_template) {
+    int pos = 1;
+    int open;
+    int data_size;
+    int name_offset;
+    evtx_xml_obj_t *obj_p = *obj;
 
+    if (bytes[0] != 0x01 && bytes[0] != 0x41) {
+        /* TODO: Log error */
+        return 0;
+    }
+    open = (int)bytes[0];
+
+    if (in_template) {
+        obj_p->dep = two_bytes_to_int16(bytes + pos);
+        pos += 2;
+    }
+
+    data_size = four_bytes_to_int32(bytes + pos);
+    pos += 4;
+
+
+}
