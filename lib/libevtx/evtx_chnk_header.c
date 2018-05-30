@@ -82,6 +82,9 @@ int evtx_chnk_header_init(evtx_chnk_header_t **chk_header, const char *bytes) {
     ret->flags = four_bytes_to_int32(bytes + 0x78);
     ret->header_crc32 = four_bytes_to_int32(bytes + 0x7C);
 
+    CALLOC(ret->records, ret->last_event_record_num - ret->first_event_record_num,
+        sizeof(evtx_record_t*), return 0);
+
     while (_check_next(bytes + pos) != 0) {
         pos += evtx_record_init(ret->records + i, bytes + pos);
     }

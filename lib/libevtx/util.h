@@ -87,9 +87,9 @@ void _evtx_alloc_fail(size_t size);
 
 int _evtx_log(evtx_log_level_t level, const char *format, ...);
 
-uint16_t two_bytes_to_int16(const char *bytes);
-uint32_t four_bytes_to_int32(const char *bytes);
-uint64_t eight_bytes_to_int64(const char *bytes);
+uint16_t two_bytes_to_int16(const unsigned char *bytes);
+uint32_t four_bytes_to_int32(const unsigned char *bytes);
+uint64_t eight_bytes_to_int64(const unsigned char *bytes);
 
 time_t _filetime_to_unix_time(uint64_t filetime);
 int _hash_match(uint16_t hash, const char *utf16_str, int len);

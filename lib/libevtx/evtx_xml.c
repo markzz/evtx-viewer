@@ -46,7 +46,7 @@ int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes, int in_template) {
     if (bytes[pos] == 0x0C) {
         pos += _parse_template(&ret, bytes + pos);
     } else if (bytes[pos] == 0x01 || bytes[pos] == 0x41) {
-        /* PARSE XML OBJ */
+        pos += _parse_xml_obj(&ret, bytes + pos, in_template);
     } else {
         /* TODO: log error */
         return 0;

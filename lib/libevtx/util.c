@@ -27,15 +27,15 @@ void _evtx_alloc_fail(size_t size) {
     fprintf(stderr, "allocation failure: could not allocate %zu bytes\n", size);
 }
 
-uint16_t two_bytes_to_int16(const char *bytes) {
+uint16_t two_bytes_to_int16(const unsigned char *bytes) {
     return (uint16_t)bytes[0] | (uint16_t)bytes[1] << 8;
 }
 
-uint32_t four_bytes_to_int32(const char *bytes) {
+uint32_t four_bytes_to_int32(const unsigned char *bytes) {
     return (uint32_t)two_bytes_to_int16(bytes) | (uint32_t)bytes[2] << 16 | (uint32_t)bytes[3] << 24;
 }
 
-uint64_t eight_bytes_to_int64(const char *bytes) {
+uint64_t eight_bytes_to_int64(const unsigned char *bytes) {
     return (uint64_t) four_bytes_to_int32(bytes) | (uint64_t)bytes[4] << 32 | (uint64_t)bytes[5] << 40 |
             (uint64_t)bytes[6] << 48 | (uint64_t) bytes[7] << 56;
 }
@@ -51,7 +51,7 @@ uint16_t _evtx_ms_str_hash(const char *utf16_str, int len) {
 }
 
 time_t _filetime_to_unix_time(uint64_t filetime) {
-    return (unsigned long)((filetime / 10000000) - 11644473600);
+    return (time_t)((filetime / 10000000) - 11644473600);
 }
 
 int _hash_match(uint16_t hash, const char *utf16_str, int len) {

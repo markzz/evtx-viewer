@@ -19,6 +19,8 @@
 #ifndef EVTX_VIEWER_XML_OBJ_H
 #define EVTX_VIEWER_XML_OBJ_H
 
+#include <inttypes.h>
+
 typedef struct _evtx_xml_attr_t evtx_xml_attr_t;
 typedef struct _evtx_xml_obj_t evtx_xml_obj_t;
 typedef struct _evtx_xml_template_t evtx_xml_template_t;
@@ -37,6 +39,8 @@ struct _evtx_xml_obj_t {
 int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes, int in_template);
 
 int _parse_template(evtx_xml_obj_t **obj, const char *bytes);
+
+int _parse_xml_obj(evtx_xml_obj_t **obj, const char *bytes, int in_template);
 
 
 #endif //EVTX_VIEWER_XML_OBJ_H

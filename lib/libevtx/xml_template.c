@@ -103,7 +103,7 @@ int _parse_template(evtx_xml_obj_t **obj, const char *bytes) {
                 break;
             case EVTX_TYPE_BIN_XML:
                 CALLOC(values[i], 1, sizeof(evtx_xml_obj_t), return 0);
-                parse_fragment((evtx_xml_obj_t**)&values[i], bytes + pos);
+                parse_fragment((evtx_xml_obj_t**)&values[i], bytes + pos, 1);
                 pos += vspec[i][0];
                 break;
             case EVTX_TYPE_FILE_TIME:
