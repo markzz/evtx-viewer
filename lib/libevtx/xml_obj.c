@@ -47,5 +47,8 @@ int _parse_xml_obj(evtx_xml_obj_t **obj, const char *bytes, int in_template) {
     data_size = four_bytes_to_int32(bytes + pos);
     pos += 4;
 
+    name_offset = four_bytes_to_int32(bytes + pos);
+    pos += 4;
+
 
 }
