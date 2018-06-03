@@ -21,12 +21,14 @@
 
 #include <inttypes.h>
 
+#include "util.h"
+
 typedef struct _evtx_xml_attr_t evtx_xml_attr_t;
 typedef struct _evtx_xml_obj_t evtx_xml_obj_t;
 typedef struct _evtx_xml_template_t evtx_xml_template_t;
 
 struct _evtx_xml_obj_t {
-    char *name;
+    char16_t *name;
     int16_t dep;
 
     int num_attrs;
@@ -36,11 +38,11 @@ struct _evtx_xml_obj_t {
     struct _evtx_xml_obj_t **children;
 };
 
-int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes, int in_template);
+int parse_fragment(evtx_xml_obj_t **obj_p, const unsigned char *chnk_header, int offset, int in_template);
 
-int _parse_template(evtx_xml_obj_t **obj, const char *bytes);
+int _parse_template(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int offset);
 
-int _parse_xml_obj(evtx_xml_obj_t **obj, const char *bytes, int in_template);
+int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int offset, int in_template);
 
 
 #endif //EVTX_VIEWER_XML_OBJ_H

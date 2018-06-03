@@ -24,6 +24,8 @@
 
 #include "evtx.h"
 
+typedef uint16_t char16_t;
+
 typedef enum _evtx_value_type_t {
     EVTX_TYPE_NULL,
     EVTX_TYPE_STRING,
@@ -92,8 +94,8 @@ uint32_t four_bytes_to_int32(const unsigned char *bytes);
 uint64_t eight_bytes_to_int64(const unsigned char *bytes);
 
 time_t _filetime_to_unix_time(uint64_t filetime);
-int _hash_match(uint16_t hash, const char *utf16_str, int len);
+int _hash_match(uint16_t hash, const char16_t *utf16_str, int len);
 
-char *_get_string_from_offset(const char *search, int offset);
+
 
 #endif //_UTIL_H

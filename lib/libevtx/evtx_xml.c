@@ -22,7 +22,7 @@
 #include "evtx_xml.h"
 #include "util.h"
 
-static int _check_magic(const char *bytes) {
+static int _check_magic(const unsigned char *bytes) {
     char expected[] = {0x0F, 0x01, 0x01, 0x00};
     for (int i = 0; i < 4; i++) {
         if (bytes[i] != expected[i]) {
@@ -32,21 +32,21 @@ static int _check_magic(const char *bytes) {
     return 0;
 }
 
-int parse_fragment(evtx_xml_obj_t **obj_p, const char *bytes, int in_template) {
+int parse_fragment(evtx_xml_obj_t **obj_p, const unsigned char *chnk_header, int offset, int in_template) {
     evtx_xml_obj_t *ret = NULL;
     int pos = 4;
 
-    if (_check_magic(bytes) != 0) {
+    if (_check_magic(chnk_header + offset) != 0) {
         /* TODO: Log failure */
         return 0;
     }
 
     CALLOC(ret, 1, sizeof(evtx_xml_obj_t), return 0);
 
-    if (bytes[pos] == 0x0C) {
-        pos += _parse_template(&ret, bytes + pos);
-    } else if (bytes[pos] == 0x01 || bytes[pos] == 0x41) {
-        pos += _parse_xml_obj(&ret, bytes + pos, in_template);
+    if (chnk_header[offset + pos] == 0x0C) {
+        pos += _parse_template(&ret, chnk_header, offset + pos);
+    } else if (chnk_header[offset + pos] == 0x01 || chnk_header[offset + pos] == 0x41) {
+        pos += _parse_xml_obj(&ret, chnk_header, offset + pos, in_template);
     } else {
         /* TODO: log error */
         return 0;

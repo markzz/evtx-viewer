@@ -40,11 +40,11 @@ uint64_t eight_bytes_to_int64(const unsigned char *bytes) {
             (uint64_t)bytes[6] << 48 | (uint64_t) bytes[7] << 56;
 }
 
-uint16_t _evtx_ms_str_hash(const char *utf16_str, int len) {
-    int val = 0;
+uint16_t _evtx_ms_str_hash(const char16_t *utf16_str, int len) {
+    unsigned int val = 0;
 
     for (int i = 0; i < len; i++) {
-        val = val * 65599 + (utf16_str[i*2] | utf16_str[i*2+1] << 8);
+        val = val * 65599 + utf16_str[i];
     }
 
     return (uint16_t)(val & 0xff);
@@ -54,28 +54,7 @@ time_t _filetime_to_unix_time(uint64_t filetime) {
     return (time_t)((filetime / 10000000) - 11644473600);
 }
 
-int _hash_match(uint16_t hash, const char *utf16_str, int len) {
+int _hash_match(uint16_t hash, const char16_t *utf16_str, int len) {
     return hash == _evtx_ms_str_hash(utf16_str, len);
 }
 
-/* this is me being lazy, this should probably be changed... */
-char *_get_string_from_offset(const char *bytes, int offset) {
-    char *b = (char*)bytes;
-    size_t s;
-    uint16_t hash;
-    char *ret = NULL;
-
-    while (strcmp(b, "ElfChnk") != 0) {
-        b -= 1;
-    }
-
-    b += offset + 4;
-    hash = two_bytes_to_int16(b); /* TODO: Check hash */
-    b += 2;
-    s = two_bytes_to_int16(b);
-    b += 2;
-
-    CALLOC(ret, s * 2 + 2, sizeof(char), return NULL);
-    memcpy(ret, b, s * 2);
-    return ret;
-}

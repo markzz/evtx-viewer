@@ -30,7 +30,7 @@ struct _evtx_record_t {
     evtx_xml_obj_t *xml_obj;
 };
 
-static int _check_magic(const char *bytes) {
+static int _check_magic(const unsigned char *bytes) {
     char expected[] = {0x2A, 0x2A, 0x00, 0x00};
     for (int i = 0; i < 4; i++) {
         if (bytes[i] != expected[i]) {
@@ -40,10 +40,11 @@ static int _check_magic(const char *bytes) {
     return 0;
 }
 
-int evtx_record_init(evtx_record_t **record, const char *bytes) {
+int evtx_record_init(evtx_record_t **record, const unsigned char *chnk_head, int offset) {
     evtx_record_t *ret;
     int size = 0;
     uint64_t tmp_ft;
+    const unsigned char *bytes = chnk_head + offset;
 
     if (_check_magic(bytes) != 0) {
         /* TODO: Log failure */
@@ -60,7 +61,7 @@ int evtx_record_init(evtx_record_t **record, const char *bytes) {
     tmp_ft = eight_bytes_to_int64(bytes + 0x10);
     ret->record_time = _filetime_to_unix_time(tmp_ft);
 
-    size = 0x18 + parse_fragment(&ret->xml_obj, bytes + 0x18, 0);
+    size = 0x18 + parse_fragment(&ret->xml_obj, chnk_head, offset + 0x18, 0);
 
     *record = ret;
     return size;

@@ -26,29 +26,75 @@ struct _evtx_xml_attr_t {
     char *value;
 };
 
-int _parse_xml_obj(evtx_xml_obj_t **obj, const char *bytes, int in_template) {
+static char16_t *_evtx_read_name(const unsigned char *bytes, size_t *size) {
+    /* first four bytes are currently unknown; perhaps log in debug? */
+    uint16_t hash;
+    size_t name_size;
+    char16_t *name;
+
+    hash = two_bytes_to_int16(bytes + 0x04);
+    name_size = two_bytes_to_int16(bytes + 0x06);
+
+    CALLOC(name, name_size + 1, sizeof(char16_t), return NULL);
+
+    for (int i = 0; i < name_size; i++) {
+        name[i] = two_bytes_to_int16(bytes + 0x08 + 2 * i);
+    }
+
+    if (_hash_match(hash, name, name_size) != 0) {
+        /* TODO: Log warning */
+    }
+
+    if (size != NULL) {
+        *size = name_size * 2 + 2;
+    }
+    return name;
+}
+
+int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int offset, int in_template) {
     int pos = 1;
     int open;
     int data_size;
-    int name_offset;
+    uint32_t name_offset;
+    size_t tmp;
+    char16_t *name;
     evtx_xml_obj_t *obj_p = *obj;
 
-    if (bytes[0] != 0x01 && bytes[0] != 0x41) {
+    if (chnk_header[0] != 0x01 && chnk_header[offset] != 0x41) {
         /* TODO: Log error */
         return 0;
     }
-    open = (int)bytes[0];
+    open = (int)chnk_header[offset];
 
     if (in_template) {
-        obj_p->dep = two_bytes_to_int16(bytes + pos);
+        obj_p->dep = two_bytes_to_int16(chnk_header + offset + pos);
         pos += 2;
     }
 
-    data_size = four_bytes_to_int32(bytes + pos);
+    data_size = four_bytes_to_int32(chnk_header + offset + pos);
     pos += 4;
 
-    name_offset = four_bytes_to_int32(bytes + pos);
+    name_offset = four_bytes_to_int32(chnk_header + offset + pos);
     pos += 4;
 
+    if (name_offset == offset + pos) {
+        name = _evtx_read_name(chnk_header + name_offset, &tmp);
+        pos += tmp;
+    } else {
+        name = _evtx_read_name(chnk_header + name_offset, NULL);
+    }
+    obj_p->name = name;
 
+    obj_p->num_attrs = 0;
+    if (open & 0x40) {
+        while (chnk_header[offset + pos] & 0x06) {
+            pos += 1;
+            uint32_t attr_name_offset = four_bytes_to_int32(chnk_header + offset + pos);
+            pos += 4;
+
+            if (attr_name_offset == offset + pos) {
+
+            }
+        }
+    }
 }

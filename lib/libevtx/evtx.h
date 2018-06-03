@@ -29,6 +29,6 @@ typedef enum _evtx_log_level_t {
 
 typedef struct _evtx_t evtx_t;
 
-evtx_t *evtx_header_init(char *bytes);
+evtx_t *evtx_header_init(unsigned char *bytes);
 
 #endif

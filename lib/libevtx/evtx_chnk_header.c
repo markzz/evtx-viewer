@@ -35,7 +35,7 @@ struct _evtx_chnk_header_t {
     evtx_record_t **records;
 };
 
-static int _check_first_eight(const char *bytes) {
+static int _check_first_eight(const unsigned char *bytes) {
     char expected[] = {'E', 'l', 'f', 'C', 'h', 'n', 'k', 0};
     for (int i = 0; i < 8; i++) {
         if (bytes[i] != expected[i]) {
@@ -45,7 +45,7 @@ static int _check_first_eight(const char *bytes) {
     return 0;
 }
 
-static int _check_next(const char *bytes) {
+static int _check_next(const unsigned char *bytes) {
     char expected[] = {0x0F, 0x01, 0x01, 0x00};
     for (int i = 0; i < 4; i++) {
         if (bytes[i] != expected[i]) {
@@ -55,7 +55,7 @@ static int _check_next(const char *bytes) {
     return 0;
 }
 
-int evtx_chnk_header_init(evtx_chnk_header_t **chk_header, const char *bytes) {
+int evtx_chnk_header_init(evtx_chnk_header_t **chk_header, const unsigned char *bytes) {
     evtx_chnk_header_t *ret;
     int pos = 0x0200;
     int i = 0;
@@ -82,11 +82,11 @@ int evtx_chnk_header_init(evtx_chnk_header_t **chk_header, const char *bytes) {
     ret->flags = four_bytes_to_int32(bytes + 0x78);
     ret->header_crc32 = four_bytes_to_int32(bytes + 0x7C);
 
-    CALLOC(ret->records, ret->last_event_record_num - ret->first_event_record_num,
+    CALLOC(ret->records, (size_t)(ret->last_event_record_num - ret->first_event_record_num),
         sizeof(evtx_record_t*), return 0);
 
     while (_check_next(bytes + pos) != 0) {
-        pos += evtx_record_init(ret->records + i, bytes + pos);
+        pos += evtx_record_init(ret->records + i, bytes, pos);
     }
 
     *chk_header = ret;

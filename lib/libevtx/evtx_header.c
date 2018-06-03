@@ -36,7 +36,7 @@ struct _evtx_t {
     evtx_chnk_header_t **chunks;
 };
 
-static int _check_first_eight(const char *bytes) {
+static int _check_first_eight(const unsigned char *bytes) {
     char expected[] = {'E', 'l', 'f', 'F', 'i', 'l', 'e', 0};
     for (int i = 0; i < 8; i++) {
         if (bytes[i] != expected[i]) {
@@ -51,7 +51,7 @@ void evtx_header_free(evtx_t *h) {
     FREE(h);
 }
 
-evtx_t *evtx_header_init(char *bytes) {
+evtx_t *evtx_header_init(unsigned char *bytes) {
     evtx_t *ret = NULL;
     int pos = 4096;
 
@@ -89,7 +89,7 @@ evtx_t *evtx_header_init(char *bytes) {
     for (int i = 0; i < ret->num_chunks; i++) {
         pos += evtx_chnk_header_init(ret->chunks + i, bytes + pos);
 
-        while (strcmp(bytes + pos, "ElfChnk") != 0) {
+        while (strcmp((char *)(bytes + pos), "ElfChnk") != 0) {
             pos++;
         }
     }
