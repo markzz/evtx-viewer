@@ -17,13 +17,14 @@
  */
 
 #include <inttypes.h>
+#include <string.h>
 
 #include "evtx_xml.h"
 #include "util.h"
 
 struct _evtx_xml_attr_t {
-    char *name;
-    char *value;
+    char16_t *name;
+    char16_t *value;
 };
 
 static char16_t *_evtx_read_name(const unsigned char *bytes, size_t *size) {
@@ -55,6 +56,7 @@ int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int o
     int pos = 1;
     int open;
     int data_size;
+    size_t attr_size = 0;
     uint32_t name_offset;
     size_t tmp;
     char16_t *name;
@@ -88,12 +90,33 @@ int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int o
     obj_p->num_attrs = 0;
     if (open & 0x40) {
         while (chnk_header[offset + pos] & 0x06) {
+            obj_p->num_attrs += 1;
+            obj_p->attrs = _evtx_greedy_grow((void**)obj_p->attrs, &attr_size, obj_p->num_attrs * sizeof(evtx_xml_attr_t));
+
             pos += 1;
             uint32_t attr_name_offset = four_bytes_to_int32(chnk_header + offset + pos);
             pos += 4;
 
             if (attr_name_offset == offset + pos) {
+                name = _evtx_read_name(chnk_header + attr_name_offset, &tmp);
+                pos += tmp;
+            } else {
+                name = _evtx_read_name(chnk_header + attr_name_offset, NULL);
+            }
 
+            CALLOC(obj_p->attrs[obj_p->num_attrs-1], 1, sizeof(evtx_xml_attr_t), return 0);
+
+            obj_p->attrs[obj_p->num_attrs-1]->name = name;
+
+            if (chnk_header[offset + pos] == 0x0d || chnk_header[offset + pos] == 0x0e) {
+                /* we copy the next four bytes as if they are a string */
+                CALLOC(obj_p->attrs[obj_p->num_attrs-1]->value, 4, sizeof(char), return 0);
+                memcpy(obj_p->attrs[obj_p->num_attrs-1]->value, chnk_header + offset + pos, 4);
+                pos += 4;
+            } else if (chnk_header[offset + pos] == 0x05 && chnk_header[offset + pos + 1] == 0x01) {
+                pos += 2;
+                tmp = two_bytes_to_int16(chnk_header + offset + pos);
+                pos += 2;
             }
         }
     }

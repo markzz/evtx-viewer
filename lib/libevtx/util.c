@@ -58,3 +58,42 @@ int _hash_match(uint16_t hash, const char16_t *utf16_str, int len) {
     return hash == _evtx_ms_str_hash(utf16_str, len);
 }
 
+void *_evtx_realloc(void **data, size_t *current, const size_t required)  {
+    char *newdata;
+
+    newdata = realloc(*data, required);
+    if(!newdata) {
+        _evtx_alloc_fail(required);
+        return NULL;
+    }
+
+    if (*current < required) {
+        /* ensure all new memory is zeroed out, in both the initial
+         * allocation and later reallocs */
+        memset(newdata + *current, 0, required - *current);
+    }
+    *current = required;
+    *data = newdata;
+    return newdata;
+}
+
+void *_evtx_greedy_grow(void **data, size_t *current, const size_t required) {
+    size_t newsize = 0;
+
+    if(*current >= required) {
+        return data;
+    }
+
+    if(*current == 0) {
+        newsize = required;
+    } else {
+        newsize = *current * 2;
+    }
+
+    /* check for overflows */
+    if (newsize < required) {
+        return NULL;
+    }
+
+    return _evtx_realloc(data, current, newsize);
+}

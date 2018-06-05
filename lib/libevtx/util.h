@@ -96,6 +96,7 @@ uint64_t eight_bytes_to_int64(const unsigned char *bytes);
 time_t _filetime_to_unix_time(uint64_t filetime);
 int _hash_match(uint16_t hash, const char16_t *utf16_str, int len);
 
-
+void *_evtx_realloc(void **data, size_t *current, const size_t required);
+void *_evtx_greedy_grow(void **data, size_t *current, const size_t required);
 
 #endif //_UTIL_H
