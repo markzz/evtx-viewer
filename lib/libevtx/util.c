@@ -80,6 +80,11 @@ void *_evtx_realloc(void **data, size_t *current, const size_t required)  {
 void *_evtx_greedy_grow(void **data, size_t *current, const size_t required) {
     size_t newsize = 0;
 
+    if (data == NULL) {
+        CALLOC(data, 1, sizeof(void*), return NULL);
+        return data;
+    }
+
     if(*current >= required) {
         return data;
     }

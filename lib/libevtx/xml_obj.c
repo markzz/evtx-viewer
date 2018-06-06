@@ -47,7 +47,7 @@ static char16_t *_evtx_read_name(const unsigned char *bytes, size_t *size) {
     }
 
     if (size != NULL) {
-        *size = name_size * 2 + 2;
+        *size = name_size * 2 + 10;
     }
     return name;
 }
@@ -89,7 +89,9 @@ int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int o
 
     obj_p->num_attrs = 0;
     if (open & 0x40) {
-        while (chnk_header[offset + pos] & 0x06) {
+        /* we really don't care about the size */
+        pos += 4;
+        while ((chnk_header[offset + pos] & 0x06) == 0x06) {
             obj_p->num_attrs += 1;
             obj_p->attrs = _evtx_greedy_grow((void**)obj_p->attrs, &attr_size, obj_p->num_attrs * sizeof(evtx_xml_attr_t));
 
@@ -117,7 +119,22 @@ int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int o
                 pos += 2;
                 tmp = two_bytes_to_int16(chnk_header + offset + pos);
                 pos += 2;
+                CALLOC(obj_p->attrs[obj_p->num_attrs-1]->value, tmp + 1, sizeof(char16_t), return 0);
+                for (int i = 0; i < tmp; i++) {
+                    obj_p->attrs[obj_p->num_attrs-1]->value[i] = two_bytes_to_int16(chnk_header + offset + pos);
+                    pos += 2;
+                }
             }
         }
     }
+
+    if (chnk_header[offset + pos] == 0x03) {
+        return data_size;
+    }
+
+    if (chnk_header[offset + pos] != 0x02) {
+        /* LOG ERROR */
+    }
+
+    
 }
