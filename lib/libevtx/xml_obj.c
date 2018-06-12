@@ -134,7 +134,17 @@ int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int o
 
     if (chnk_header[offset + pos] != 0x02) {
         /* LOG ERROR */
+        return 0;
     }
 
-    
+    pos += 1;
+    while (chnk_header[offset + pos] != 0x04) {
+        if (chnk_header[offset + pos] == 0x0d || chnk_header[offset + pos] == 0x0e) {
+
+        }
+
+        if (chnk_header[offset + pos] == 0x01 || chnk_header[offset + pos] == 0x41) {
+
+        }
+    }
 }

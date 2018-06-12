@@ -37,7 +37,8 @@ struct _evtx_xml_obj_t {
     int num_children;
     struct _evtx_xml_obj_t **children;
 
-    char16_t *value;
+    int num_values;
+    char16_t **value;
 };
 
 int parse_fragment(evtx_xml_obj_t **obj_p, const unsigned char *chnk_header, int offset, int in_template);
