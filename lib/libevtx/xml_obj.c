@@ -22,6 +22,17 @@
 #include "evtx_xml.h"
 #include "util.h"
 
+typedef enum _evtx_val_token_types {
+    BIN_XML_ELEMENT = 0x01,
+    BIN_XML_TOKEN_VALUE = 0x05,
+    BIN_XML_TOKEN_CDATA = 0x07,
+    BIN_XML_TOKEN_CHAR_REF = 0x08,
+    BIN_XML_TOKEN_ENTITY_REF = 0x09,
+    BIN_XML_SUB = 0x0D,
+    BIN_XML_OPT_SUB = 0x0E,
+
+};
+
 struct _evtx_xml_attr_t {
     char16_t *name;
     char16_t *value;
@@ -50,6 +61,10 @@ static char16_t *_evtx_read_name(const unsigned char *bytes, size_t *size) {
         *size = name_size * 2 + 10;
     }
     return name;
+}
+
+static void *_evtx_record_read_xml_value(const unsigned char *ch, int offset) {
+    const unsigned char *xval = ch + offset;
 }
 
 int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int offset, int in_template) {
@@ -128,7 +143,7 @@ int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int o
         }
     }
 
-    if (chnk_header[offset + pos] == 0x03) {
+    if (chnk_header[offset + pos] == 0x03 && (open & 0x40)) {
         return data_size;
     }
 
@@ -141,9 +156,15 @@ int _parse_xml_obj(evtx_xml_obj_t **obj, const unsigned char *chnk_header, int o
     while (chnk_header[offset + pos] != 0x04) {
         if (chnk_header[offset + pos] == 0x0d || chnk_header[offset + pos] == 0x0e) {
 
-        }
+        } else if (chnk_header[offset + pos] == 0x01 || chnk_header[offset + pos] == 0x41) {
 
-        if (chnk_header[offset + pos] == 0x01 || chnk_header[offset + pos] == 0x41) {
+        } else if ((chnk_header[offset + pos] == 0x05 || chnk_header[offset + pos] == 0x45) && chnk_header[offset + pos + 1] == 0x01) {
+            pos += 2;
+            tmp = two_bytes_to_int16(chnk_header + pos);
+
+        } else if (chnk_header[offset + pos] == 0x09 || chnk_header[offset + pos] == 0x49) {
+
+        } else if (chnk_header[offset + pos] == 0x08 || chnk_header[offset + pos] == 0x48) {
 
         }
     }
